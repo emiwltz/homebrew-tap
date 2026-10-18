@@ -1,0 +1,38 @@
+# Installs something from this tap the way a person would, on GitHub's fresh Macs: tap, install, test, start
+# the command. It runs when the formula changes, once a week, and by hand.
+name: install
+
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 6 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: "1"
+      HOMEBREW_NO_INSTALL_CLEANUP: "1"
+    steps:
+      - run: brew tap emiwltz/tap
+      - name: brew install --HEAD emiwltz/tap/something (timed)
+        run: |
+          start=$(date +%s)
+          brew install --HEAD emiwltz/tap/something
+          echo "::notice::brew install took $(( $(date +%s) - start )) s on ${{ matrix.os }}"
+      - run: brew test emiwltz/tap/something
+      - run: something --version
+      - run: something guide
+      - name: something check on the template
+        run: |
+          template="$(brew --prefix)/opt/something/something.app/Contents/Resources/share/template.html"
+          something check "$template"
