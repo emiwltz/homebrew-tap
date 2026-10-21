@@ -11,6 +11,13 @@ class Something < Formula
   license "MIT"
   head "https://github.com/emiwltz/something.git", branch: "main"
 
+  bottle do
+    root_url "https://github.com/emiwltz/homebrew-tap/releases/download/something-0.2.0"
+    sha256                               arm64_tahoe:   "39516f71494a63cfc19aa8deb18fdd55c7972d73abe438654b17e205a17c2658"
+    sha256                               arm64_sequoia: "df719fc2f6e39a592c69f7a3cd6adf84d1e71113d2c990c96f348bef1ca60cba"
+    sha256 cellar: :any_skip_relocation, sequoia:       "ab145c0882fbc632a4a68d145d1c555f8f81629f7b9924c578db6de3148aec49"
+  end
+
   # No bottle block by hand: publish.yml (brew pr-pull) adds it, with root_url
   # https://github.com/emiwltz/homebrew-tap/releases/download/something-0.2.0 and one sha256 per bottle tag
   # (arm64_tahoe, arm64_sequoia, sequoia). Without a fitting bottle (another prefix, --HEAD, --build-from-source),
