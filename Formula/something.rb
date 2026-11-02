@@ -1,25 +1,17 @@
 # The Homebrew formula of something as it goes into the tap emiwltz/homebrew-tap, at Formula/something.rb. Its twin,
 # packaging/homebrew/something.rb in https://github.com/emiwltz/something, is the one that repository's CI installs;
-# both are the same but for comments and the url and sha256 lines (PackagingTests checks it). On release day this
-# file gets the tag's sha256 (and, for a tag other than v0.2.0, that tag in its url and root_url comment) and is
-# copied into the tap; the bottle block is then written there by `brew pr-pull` (publish.yml) and lives only in the tap.
+# both are the same but for comments and the url and sha256 lines (PackagingTests checks it). A release is in that
+# repository's AGENTS.md, "Releasing"; the bottle block is written in the tap by `brew pr-pull` (publish.yml).
 class Something < Formula
   desc "Sees every coding agent on your Mac and gives your HTML pages a bridge to them"
   homepage "https://github.com/emiwltz/something"
-  url "https://github.com/emiwltz/something/archive/refs/tags/v0.2.0.tar.gz"
-  sha256 "88ba2489ded5c448b54730cde4c0ed6effb1006064d158fc0a407ead2c224f43"
-  license "MIT"
+  url "https://github.com/emiwltz/something/archive/refs/tags/v0.3.0.tar.gz"
+  sha256 "2bd702734adc7e367bc187150b2fd9c0987303fc0516e83f451a051b77fc13a8"
+  license all_of: ["MIT", "OFL-1.1"]
   head "https://github.com/emiwltz/something.git", branch: "main"
 
-  bottle do
-    root_url "https://github.com/emiwltz/homebrew-tap/releases/download/something-0.2.0"
-    sha256                               arm64_tahoe:   "39516f71494a63cfc19aa8deb18fdd55c7972d73abe438654b17e205a17c2658"
-    sha256                               arm64_sequoia: "df719fc2f6e39a592c69f7a3cd6adf84d1e71113d2c990c96f348bef1ca60cba"
-    sha256 cellar: :any_skip_relocation, sequoia:       "ab145c0882fbc632a4a68d145d1c555f8f81629f7b9924c578db6de3148aec49"
-  end
-
   # No bottle block by hand: publish.yml (brew pr-pull) adds it, with root_url
-  # https://github.com/emiwltz/homebrew-tap/releases/download/something-0.2.0 and one sha256 per bottle tag
+  # https://github.com/emiwltz/homebrew-tap/releases/download/something-0.3.0 and one sha256 per bottle tag
   # (arm64_tahoe, arm64_sequoia, sequoia). Without a fitting bottle (another prefix, --HEAD, --build-from-source),
   # Homebrew builds from source.
 
@@ -38,13 +30,6 @@ class Something < Formula
     system "tools/make-app.sh", prefix, version.to_s, ".build/release/something"
     # A script that execs the program inside the .app: through a symlink, Bundle.main would not be the .app.
     bin.write_exec_script prefix/"something.app/Contents/MacOS/something"
-  end
-
-  # Spotlight does not index Homebrew's prefix; the tour offers a launcher in ~/Applications instead.
-  def caveats
-    <<~EOS
-      Start something once: it can add itself to ~/Applications so Spotlight finds it.
-    EOS
   end
 
   test do
